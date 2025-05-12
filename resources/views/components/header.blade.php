@@ -232,6 +232,7 @@
                                 <div class="dropdown-header text-center">
                                     <i class="fas fa-user-circle"></i>
                                     {{ Auth::user()->name }}
+                                    {{ Auth::user()->id }}
                                 </div>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">

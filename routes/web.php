@@ -73,15 +73,14 @@ Route::middleware(['role:user'])->group(function () {
 
     Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.details');
     Route::get('/', [HomeController::class, 'index'])->name('user.index');
-    Route::get('/cart', [HomeController::class, 'cart'])->name('shopping-cart');
+    // Route::get('/cart', [HomeController::class, 'cart'])->name('shopping-cart');
     Route::get('/shop', [HomeController::class, 'card'])->name('shop');
     Route::get('/contact', [HomeController::class, 'contacts'])->name('contact');
 
     Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
     Route::get('/shop-details/{id}', [CartController::class, 'carts'])->name('shop-details');
     Route::post('/addToCart/{id}', [CartController::class, 'addToCart'])->name('addToCart');
-    Route::get('/carts',[CartController::class,'index'])->name('cart-index');
-
+    Route::get('/cart', [CartController::class, 'fetchUserCart'])->name('shopping-cart');
 
 
     // Cart routes
