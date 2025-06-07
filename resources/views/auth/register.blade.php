@@ -35,6 +35,82 @@
         background-color: azure;
     }
 </style>
+<style>
+    .auth-header {
+        text-align: left;  /* Changed from center to left */
+        padding: 1.5rem 0;
+    }
+    
+    .auth-header .auth-logo {
+        max-height: 60px;
+        width: auto;
+        object-fit: contain;
+        margin: 0;  /* Removed auto margin */
+        display: inline-block;  /* Changed from block to inline-block */
+    }
+    
+    /* Add responsive adjustments */
+    @media (max-width: 576px) {
+        .auth-header .auth-logo {
+            max-height: 30px;
+        }
+    }
+    
+    /* Add a subtle shadow to the logo */
+    .auth-header .auth-logo {
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+</style>
+<style>
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Optional: Add a tooltip to show why the button is disabled */
+.btn:disabled::after {
+    content: "Please fill in at least one field";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.btn:disabled:hover::after {
+    opacity: 1;
+}
+</style>
+<style>
+/* Add to your existing styles */
+input[name="phone"].is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+input[name="phone"]:focus {
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+</style>
 <!-- [Head] end -->
 <!-- [Body] Start -->
 
@@ -49,9 +125,11 @@
 
     <div class="auth-main">
         <div class="auth-wrapper v3">
-            <div class="auth-form">
+            <div class="auth-form"> 
                 <div class="auth-header">
-                    <a href="#"><img src="../assets/images/logo-dark.svg" alt="img"></a>
+                    <a href="{{ route('user.index') }}">
+                        <img src="{{ asset('img/logo.png') }}" alt="Logo" class="auth-logo">
+                    </a>
                 </div>
                 <div class="card my-5">
                     <div class="card-body">
@@ -59,20 +137,19 @@
                             <h3 class="mb-0"><b>Sign up</b></h3>
                             <a href="{{route('login')}}" class="link-primary">Already have an account?</a>
                         </div>
-                        <form action="{{ route('signup') }}" method="POST">
+                        <form action="{{ route('signup') }}" method="POST" id="registerForm">
                             @csrf
                             <div class="row">
-
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Name*</label>
                                         <input type="text" name="name"
                                             class="form-control @error('name') is-invalid @enderror"
-                                            placeholder="Full Name" value="{{ old('name') }}" required>
+                                            placeholder="Full Name" value="{{ old('name') }}" required
+                                            data-validate="required">
                                         @error('name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
-
                                     </div>
                                 </div>
                             </div>
@@ -81,35 +158,60 @@
                                 <label class="form-label">Email Address*</label>
                                 <input type="email" name="email"
                                     class="form-control @error('email') is-invalid @enderror"
-                                    placeholder="Email Address" value="{{ old('email') }}" required>
+                                    placeholder="Email Address" value="{{ old('email') }}" required
+                                    data-validate="required">
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            
                             <div class="form-group mb-3">
-                                <label class="form-label">Password</label>
+                                <label class="form-label">Phone Number*</label>
+                                <input type="tel" 
+                                       name="phone"
+                                       class="form-control @error('phone') is-invalid @enderror"
+                                       placeholder="Phone Number (10 digits)" 
+                                       value="{{ old('phone') }}" 
+                                       pattern="[0-9]{10}"
+                                       maxlength="10"
+                                       minlength="10"
+                                       title="Please enter exactly 10 digits"
+                                       required
+                                       data-validate="required">
+                                @error('phone')
+                                    <div class="invalid-feedback">
+                                        @if($message == 'The phone field is required.')
+                                            Please enter your phone number
+                                        @elseif($message == 'The phone must be exactly 10 digits.')
+                                            Phone number must be exactly 10 digits
+                                        @elseif($message == 'The phone must be a number.')
+                                            Phone number must contain only digits
+                                        @else
+                                            {{ $message }}
+                                        @endif
+                                    </div>
+                                @enderror
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label class="form-label">Password*</label>
                                 <input type="password" name="password"
                                     class="form-control @error('password') is-invalid @enderror" placeholder="Password"
-                                    value="{{ old('password') }}" required>
+                                    value="{{ old('password') }}" required
+                                    data-validate="required">
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="form-group mb-3">
-                                <label class="form-label"> Confirm Password</label>
+                                <label class="form-label">Confirm Password*</label>
                                 <input type="password" name="password_confirmation" class="form-control"
-                                    placeholder=" Confirm Password" required>
+                                    placeholder="Confirm Password" required
+                                    data-validate="required">
                                     @error('password_confirmation')
                                               <div class="invalid-feedback">{{$message}}</div>
                                               
                                             @enderror
-                            </div>
-                            <div class="form-group mb-3">
-                              <label class="form-label">Photo</label>
-                              <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror" placeholder="Photo">
-                              @error('photo')
-                                <div class="invalid-feedback">{{$message}}</div>
-                              @enderror
                             </div>
 
                             <p class="mt-4 text-sm text-muted">By Signing up, you agree to our <a href="#"
@@ -117,55 +219,23 @@
                                     class="text-primary">
                                     Privacy Policy</a></p>
                             <div class="d-grid mt-3">
-                                <input type="submit" class="btn btn-primary" value="Create Account" />
+                                <input type="submit" class="btn btn-primary" id="submitBtn" value="Create Account" />
                             </div>
                         </form>
 
-                        <div class="saprator mt-3">
-                            <span>Sign up with</span>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="d-grid">
-                                    <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
-                                        <img src="../assets/images/authentication/google.svg" alt="img"> <span
-                                            class="d-none d-sm-inline-block"> Google</span>
-                                    </button>
-                                </div>
+                        {{-- <div class="auth-footer row">
+                            <div class="col my-1">
+                                <p class="m-0">Copyright © <a href="#">Codedthemes</a></p>
                             </div>
-                            <div class="col-4">
-                                <div class="d-grid">
-                                    <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
-                                        <img src="../assets/images/authentication/twitter.svg" alt="img"> <span
-                                            class="d-none d-sm-inline-block"> Twitter</span>
-                                    </button>
-                                </div>
+                            <div class="col-auto my-1">
+                                <ul class="list-inline footer-link mb-0">
+                                    <li class="list-inline-item"><a href="#">Home</a></li>
+                                    <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                                    <li class="list-inline-item"><a href="#">Contact us</a></li>
+                                </ul>
                             </div>
-                            <div class="col-4">
-                                <div class="d-grid">
-                                    <button type="button" class="btn mt-2 btn-light-primary bg-light text-muted">
-                                        <img src="../assets/images/authentication/facebook.svg" alt="img"> <span
-                                            class="d-none d-sm-inline-block"> Facebook</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
+                        </div> --}}
                     </div>
-                </div>
-                <div class="auth-footer row">
-                    <!-- <div class=""> -->
-                    <div class="col my-1">
-                        <p class="m-0">Copyright © <a href="#">Codedthemes</a></p>
-                    </div>
-                    <div class="col-auto my-1">
-                        <ul class="list-inline footer-link mb-0">
-                            <li class="list-inline-item"><a href="#">Home</a></li>
-                            <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
-                            <li class="list-inline-item"><a href="#">Contact us</a></li>
-                        </ul>
-                    </div>
-                    <!-- </div> -->
                 </div>
             </div>
         </div>
@@ -179,224 +249,102 @@
     <script src="../assets/js/pcoded.js"></script>
     <script src="../assets/js/plugins/feather.min.js"></script>
 
-
-
-
-
     <script>
         layout_change('light');
     </script>
-
-
-
 
     <script>
         change_box_container('false');
     </script>
 
-
-
     <script>
         layout_rtl_change('false');
     </script>
-
 
     <script>
         preset_change("preset-1");
     </script>
 
-
     <script>
         font_change("Public-Sans");
     </script>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const requiredFields = form.querySelectorAll('input[required]');
 
-    <div class="offcanvas pct-offcanvas offcanvas-end" tabindex="-1" id="offcanvas_pc_layout">
-        <div class="offcanvas-header bg-primary">
-            <h5 class="offcanvas-title text-white">Mantis Customizer</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
-                aria-label="Close"></button>
-        </div>
-        <div class="pct-body" style="height: calc(100% - 60px)">
-            <div class="offcanvas-body">
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <a class="btn border-0 text-start w-100" data-bs-toggle="collapse" href="#pctcustcollapse1">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-xs bg-light-primary">
-                                        <i class="ti ti-layout-sidebar f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Theme Layout</h6>
-                                    <span>Choose your layout</span>
-                                </div>
-                                <i class="ti ti-chevron-down"></i>
-                            </div>
-                        </a>
-                        <div class="collapse show" id="pctcustcollapse1">
-                            <div class="pct-content">
-                                <div class="pc-rtl">
-                                    <p class="mb-1">Direction</p>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                            id="layoutmodertl">
-                                        <label class="form-check-label" for="layoutmodertl">RTL</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <a class="btn border-0 text-start w-100" data-bs-toggle="collapse" href="#pctcustcollapse2">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-xs bg-light-primary">
-                                        <i class="ti ti-brush f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Theme Mode</h6>
-                                    <span>Choose light or dark mode</span>
-                                </div>
-                                <i class="ti ti-chevron-down"></i>
-                            </div>
-                        </a>
-                        <div class="collapse show" id="pctcustcollapse2">
-                            <div class="pct-content">
-                                <div class="theme-color themepreset-color theme-layout">
-                                    <a href="#!" class="active" onclick="layout_change('light')"
-                                        data-value="false"><span><img src="../assets/images/customization/default.svg"
-                                                alt="img"></span><span>Light</span></a>
-                                    <a href="#!" class="" onclick="layout_change('dark')"
-                                        data-value="true"><span><img src="../assets/images/customization/dark.svg"
-                                                alt="img"></span><span>Dark</span></a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <a class="btn border-0 text-start w-100" data-bs-toggle="collapse" href="#pctcustcollapse3">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-xs bg-light-primary">
-                                        <i class="ti ti-color-swatch f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Color Scheme</h6>
-                                    <span>Choose your primary theme color</span>
-                                </div>
-                                <i class="ti ti-chevron-down"></i>
-                            </div>
-                        </a>
-                        <div class="collapse show" id="pctcustcollapse3">
-                            <div class="pct-content">
-                                <div class="theme-color preset-color">
-                                    <a href="#!" class="active" data-value="preset-1"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 1</span></a>
-                                    <a href="#!" class="" data-value="preset-2"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 2</span></a>
-                                    <a href="#!" class="" data-value="preset-3"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 3</span></a>
-                                    <a href="#!" class="" data-value="preset-4"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 4</span></a>
-                                    <a href="#!" class="" data-value="preset-5"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 5</span></a>
-                                    <a href="#!" class="" data-value="preset-6"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 6</span></a>
-                                    <a href="#!" class="" data-value="preset-7"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 7</span></a>
-                                    <a href="#!" class="" data-value="preset-8"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 8</span></a>
-                                    <a href="#!" class="" data-value="preset-9"><span><img
-                                                src="../assets/images/customization/theme-color.svg"
-                                                alt="img"></span><span>Theme 9</span></a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item pc-boxcontainer">
-                        <a class="btn border-0 text-start w-100" data-bs-toggle="collapse" href="#pctcustcollapse4">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-xs bg-light-primary">
-                                        <i class="ti ti-border-inner f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Layout Width</h6>
-                                    <span>Choose fluid or container layout</span>
-                                </div>
-                                <i class="ti ti-chevron-down"></i>
-                            </div>
-                        </a>
-                        <div class="collapse show" id="pctcustcollapse4">
-                            <div class="pct-content">
-                                <div class="theme-color themepreset-color boxwidthpreset theme-container">
-                                    <a href="#!" class="active" onclick="change_box_container('false')"
-                                        data-value="false"><span><img src="../assets/images/customization/default.svg"
-                                                alt="img"></span><span>Fluid</span></a>
-                                    <a href="#!" class="" onclick="change_box_container('true')"
-                                        data-value="true"><span><img
-                                                src="../assets/images/customization/container.svg"
-                                                alt="img"></span><span>Container</span></a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <a class="btn border-0 text-start w-100" data-bs-toggle="collapse" href="#pctcustcollapse5">
-                            <div class="d-flex align-items-center">
-                                <div class="flex-shrink-0">
-                                    <div class="avtar avtar-xs bg-light-primary">
-                                        <i class="ti ti-typography f-18"></i>
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">Font Family</h6>
-                                    <span>Choose your font family.</span>
-                                </div>
-                                <i class="ti ti-chevron-down"></i>
-                            </div>
-                        </a>
-                        <div class="collapse show" id="pctcustcollapse5">
-                            <div class="pct-content">
-                                <div class="theme-color fontpreset-color">
-                                    <a href="#!" class="active" onclick="font_change('Public-Sans')"
-                                        data-value="Public-Sans"><span>Aa</span><span>Public Sans</span></a>
-                                    <a href="#!" class="" onclick="font_change('Roboto')"
-                                        data-value="Roboto"><span>Aa</span><span>Roboto</span></a>
-                                    <a href="#!" class="" onclick="font_change('Poppins')"
-                                        data-value="Poppins"><span>Aa</span><span>Poppins</span></a>
-                                    <a href="#!" class="" onclick="font_change('Inter')"
-                                        data-value="Inter"><span>Aa</span><span>Inter</span></a>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="collapse show">
-                            <div class="pct-content">
-                                <div class="d-grid">
-                                    <button class="btn btn-light-danger" id="layoutreset">Reset Layout</button>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+        // Function to check if all required fields are empty
+        function checkEmptyFields() {
+            let allEmpty = true;
+            requiredFields.forEach(field => {
+                if (field.value.trim() !== '') {
+                    allEmpty = false;
+                }
+            });
+            return allEmpty;
+        }
+
+        // Phone number validation
+        const phoneInput = document.querySelector('input[name="phone"]');
+        
+        // Only allow numbers
+        phoneInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/\D/g, '');
+            
+            // Limit to 10 digits
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+
+        // Validate phone number on blur
+        phoneInput.addEventListener('blur', function() {
+            if (this.value.length !== 10) {
+                this.classList.add('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.textContent = 'Phone number must be exactly 10 digits';
+                }
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+
+        // Update form validation to include phone number check
+        function validateForm() {
+            const allEmpty = checkEmptyFields();
+            const phoneValid = phoneInput.value.length === 10;
+            
+            submitBtn.disabled = allEmpty || !phoneValid;
+            
+            if (allEmpty || !phoneValid) {
+                submitBtn.classList.add('btn-secondary');
+                submitBtn.classList.remove('btn-primary');
+            } else {
+                submitBtn.classList.add('btn-primary');
+                submitBtn.classList.remove('btn-secondary');
+            }
+        }
+
+        // Add input event listener for phone
+        phoneInput.addEventListener('input', validateForm);
+
+        // Form submission handler
+        form.addEventListener('submit', function(e) {
+            if (checkEmptyFields() || phoneInput.value.length !== 10) {
+                e.preventDefault();
+                if (phoneInput.value.length !== 10) {
+                    alert('Please enter exactly 10 digits for the phone number.');
+                } else {
+                    alert('Please fill in at least one field to proceed.');
+                }
+            }
+        });
+    });
+    </script>
 </body>
 <!-- [Body] end -->
 

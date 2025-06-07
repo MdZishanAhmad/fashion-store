@@ -16,8 +16,8 @@ class CartController extends Controller
     public function carts($id)
     {
         // dd($id);
-        $product = Product::find($id);
-        return view('shop-details', compact('product'));
+        $product = Product::with('category')->findOrFail($id);
+        return view('details', compact('product'));
     }
 
     public function addToCart(Request $data, $id)
@@ -30,24 +30,34 @@ class CartController extends Controller
         $item->save();
         return redirect()->back()->with('success', 'Congratulation! Item added into cart');
     }
-    public function fetchUserCart()
-    {
-        $cartItems = Cart::with(['customer', 'product'])
-            ->where('customerId', Auth::id())
-            ->get();
-    
-        // Check if cart is empty
-        if ($cartItems->isEmpty()) {
-            return view('shopping-cart')->with('message', 'Your cart is empty');
-        }
-    
-        // Check if any cart item has null product
-        if ($cartItems->contains(function ($item) {
-            return is_null($item->product);
-        })) {
-            // Handle cases where products were deleted
-        }
-    
-        return view('shopping-cart', compact('cartItems'));
-    }
+   public function fetchUserCart()
+{
+    $customerId = Auth::id();
+
+    $cartItems = Cart::with('product')
+        ->where('customerId', $customerId)
+        ->get()
+        ->filter(function ($cart) {
+            return $cart->product !== null; // Only keep cart items with valid products
+        });
+
+    return view('shopping-cart', compact('cartItems'));
+}
+public function delete($id)
+{
+    $item=Cart::findorFail($id);
+    $item->delete();
+    return redirect()->back()->with('success','1 Item has been deleted from cart ');
+
+}
+
+public function update(Request $request, $id)
+{
+    $cart = Cart::findOrFail($id);
+    $cart->quantity = $request->input('quantity');
+    $cart->save();
+
+    return response()->json(['status' => 'success', 'message' => 'Cart updated']);
+}
+
 }

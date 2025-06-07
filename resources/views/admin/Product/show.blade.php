@@ -1,14 +1,15 @@
 <!-- resources/views/products/show.blade.php -->
-@extends('components.main')
+@extends('admin.header')
+@section('title', 'ShowProducts')
 
 @section('content')
 <div class="container">
     <!-- Product Details -->
     <div class="row">
         <div class="col-md-6">
-            <img src="{{ asset($product->image) }}" class="img-fluid" alt="{{ $product->name }}">
+            <img src="{{ asset }}" class="img-fluid" alt="{{ $product->name }}">
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6">($product->image)
             <h1>{{ $product->name }}</h1>
             <p class="h4">${{ number_format($product->price, 2) }}</p>
             <p>{{ $product->description }}</p>

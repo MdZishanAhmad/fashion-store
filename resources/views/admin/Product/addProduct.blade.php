@@ -58,9 +58,10 @@
 
   --}}
 
-  @extends('admin.header')
+@extends('admin.header')
+@section('title', 'Add-Products')
 
-@section('title')
+@section('content')
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -92,7 +93,7 @@
                         <label for="category" class="form-label">Product Category</label>
                         <select name="category" id="category" class="form-control">
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}">{{ $cat->category }}</option>
+                                <option value="{{$cat->id}}">{{$cat->category}}</option>
                             @endforeach
                         </select>
                     </div>

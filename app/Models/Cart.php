@@ -13,7 +13,7 @@ class Cart extends Model
         'customerId' 
     ];
     
-    public function product(): BelongsTo
+    public function product()
     {
         return $this->belongsTo(Product::class, 'productId'); // Specify custom foreign key
     }

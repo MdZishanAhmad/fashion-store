@@ -1,7 +1,8 @@
 
 @extends('admin.header')
+@section('title', 'View-Productsx')
 
-@section('title')
+@section('content')
     <div class="row">
         
 
@@ -32,7 +33,7 @@
                                     <tr>
                                         <td>{{ $prod->id }}</td>
                                         <td>{{ $prod->name }}</td>
-                                        <td>{{ optional($prod->category)->category ?? 'No Category' }}</td>
+                                        <td> {{$prod->category->category ?? "No Category"}}</td>
                                         <td>{{ $prod->price }}</td>
                                         <td>{{ $prod->quantity }}</td>
                                         <td>{{ $prod->description }}</td>

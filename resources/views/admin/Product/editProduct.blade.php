@@ -1,6 +1,7 @@
 @extends('admin.header')
+@section('title', 'Show_products')
 
-@section('title')
+@section('content')
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -32,7 +33,7 @@
                         <label for="category" class="form-label">Product Category</label>
                         <select name="category" id="category" class="form-control">
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ $cat->id == $product->category ? 'selected' : '' }}>
+                                <option value="{{ $cat->id }}" {{ $cat->id == $product->category_id ? 'selected' : '' }}>
                                     {{ $cat->category }}
                                 </option>
                             @endforeach
@@ -48,7 +49,7 @@
                         <label for="product_photo" class="form-label">Product Photo</label>
                         <input type="file" name="product_photo" id="product_photo" class="form-control" onchange="previewImage(event)">
                         <br>
-                        <img id="photo_preview" src="#" alt="Product Image" style="max-width: 200px; border: 1px solid #ccc; padding: 5px;">
+                        <img id="photo_preview" src="{{ asset($product->photo) }}" alt="Product Image" style="max-width: 200px; border: 1px solid #ccc; padding: 5px;">
                     </div>
 
                     <button type="submit" class="btn btn-success">Update Product</button>

@@ -1,5 +1,7 @@
 
-@include('components.header')
+@extends('components.main')
+@section('title','Contact')
+@section('user-body')
 
     <!-- Map Begin -->
     <div class="map">
@@ -57,5 +59,4 @@
         </div>
     </section>
     <!-- Contact Section End -->
-
-    @include('components.footer')
+@endsection

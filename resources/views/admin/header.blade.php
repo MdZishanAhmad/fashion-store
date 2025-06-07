@@ -3,17 +3,12 @@
 <!-- [Head] start -->
 
 <head>
-    <title>Home</title>
+    <title>@yield('title','home')</title>
     <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="description"
-        content="Mantis is made using Bootstrap 5 design framework. Download the free admin template & use it for your project.">
-    <meta name="keywords"
-        content="Mantis, Dashboard UI Kit, Bootstrap 5, Admin Template, Admin Dashboard, CRM, CMS, Bootstrap Admin Template">
-    <meta name="author" content="CodedThemes">
-
+    
     <!-- [Favicon] icon -->
     <link rel="icon" href="{{ asset('assets/images/favicon.svg') }}" type="image/x-icon">
     <!-- [Google Font] Family -->
@@ -30,8 +25,42 @@
     <link rel="stylesheet" href="{{ asset('assets/fonts/material.css') }}">
     <!-- [Template CSS Files] -->
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
+    <!-- Add these in the head section -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<style>
+    .m-header {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+    }
+    
+    .b-brand {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .b-brand img.logo-lg {
+        height: 35px;
+        width: auto;
+        object-fit: contain;
+        display: inline-block;
+        vertical-align: middle;
+    }
 
+    /* Add responsive adjustments */
+    @media (max-width: 768px) {
+        .b-brand img.logo-lg {
+            height: 30px;
+        }
+    }
+</style>
 </head>
 <!-- [Head] end -->
 <!-- [Body] Start -->
@@ -47,15 +76,15 @@
     <!-- [ Sidebar Menu ] start -->
     <nav class="pc-sidebar">
         <div class="navbar-wrapper">
-            <div class="m-header">
-                <a href="../dashboard/index.html" class="b-brand text-primary">
-                    <img src="/assets/images/logo-dark.svg" class="img-fluid logo-lg" alt="logo">
+            {{-- <div class="m-header">
+                <a href="{{ route('admin.dashboard') }}" class="b-brand text-primary">
+                    <img src="{{ asset('assets/images/logo.png') }}" class="img-fluid logo-lg" alt="logo" style="max-width: 100%;">
                 </a>
-            </div>
+            </div> --}}
             <div class="navbar-content">
                 <ul class="pc-navbar">
                     <li class="pc-item">
-                        <a href="{{route('dashboard')}}" class="pc-link">
+                        <a href="{{route('admin.dashboard')}}" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-dashboard"></i></span>
                             <span class="pc-mtext">Dashboard</span>
                         </a>
@@ -96,7 +125,7 @@
                             <span class="pc-arrow"><i data-feather="chevron-right"></i></span>
                         </a>
                         <ul class="pc-submenu">
-                            <li class="pc-item"><a class="pc-link" href="/orders">Manage Orders</a></li>
+                            <li class="pc-item"><a class="pc-link" href="{{route('admin.orders.index')}}">Manage Orders</a></li>
                             <li class="pc-item"><a class="pc-link" href="/orders/reports">Order Reports</a></li>
                         </ul>
                     </li>
@@ -107,7 +136,7 @@
                         <i class="ti ti-users"></i>
                     </li>
                     <li class="pc-item">
-                        <a href="/users" class="pc-link">
+                        <a href="{{route('admin.users')}}" class="pc-link">
                             <span class="pc-micon"><i class="ti ti-user"></i></span>
                             <span class="pc-mtext">Manage Users</span>
                         </a>
@@ -156,7 +185,7 @@
                 </ul>
             </div>
             <!-- [Mobile Media Block end] -->
-            <div class="ms-auto">
+            {{-- <div class="ms-auto">
                 <ul class="list-unstyled">
                     <li class="dropdown pc-h-item">
                         <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown"
@@ -164,12 +193,12 @@
                             <i class="ti ti-mail"></i>
                         </a>
                         <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-                            <div class="dropdown-header d-flex align-items-center justify-content-between">
+                            {{-- <div class="dropdown-header d-flex align-items-center justify-content-between">
                                 <h5 class="m-0">Message</h5>
                                 <a href="#!" class="pc-head-link bg-transparent"><i
                                         class="ti ti-x text-danger"></i></a>
-                            </div>
-                            <div class="dropdown-divider"></div>
+                            </div> --}}
+                            {{-- <div class="dropdown-divider"></div>
                             <div class="dropdown-header px-0 text-wrap header-notification-scroll position-relative"
                                 style="max-height: calc(100vh - 215px)">
 
@@ -178,20 +207,20 @@
                         <div class="dropdown-divider"></div>
                         <div class="text-center py-2">
                             <a href="#!" class="link-primary">View all</a>
-                        </div>
-            </div>
+                        </div> --}}
+            {{-- </div>  --}}
             </li>
             <li class="dropdown pc-h-item header-user-profile">
                 <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#"
                     role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                    <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar">
-                    <span>Stebin Ben</span>
+                    <img src="{{ asset('assets/images/user/avatar-2.jpg') }}" alt="user-image" class="user-avtar">
+                    <span>Admin</span>
                 </a>
                 <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
                     <div class="dropdown-header">
                         <div class="d-flex mb-1">
                             <div class="flex-shrink-0">
-                                <img src="../assets/images/user/avatar-2.jpg" alt="user-image"
+                                <img src="{{ asset('assets/images/user/avatar-2.jpg') }}" alt="user-image"
                                     class="user-avtar wid-35">
                             </div>
                             <div class="flex-grow-1 ms-3">
@@ -264,7 +293,7 @@
         <div class="pc-content">
             <div class="page-header">
                 <div class="page-block">
-                    @yield('title')
+                    @yield('content')
                 </div>
             </div>
         </div>
@@ -275,22 +304,22 @@
         <div class="footer-wrapper container-fluid">
             <div class="row">
                 <div class="col-sm my-1 text-center">
-                    <p class="m-0">Zishan @ all righs reserved! 2025 &#9829; Theme: Codedthemes</div>
+                    <p class="m-0">Fashion Store @ all righs reserved! 2025 &#9829;</div>
             </div>
         </div>
     </footer>
 
     <!-- [Page Specific JS] start -->
-    <script src="../assets/js/plugins/apexcharts.min.js"></script>
-    <script src="../assets/js/pages/dashboard-default.js"></script>
+    <script src="{{ asset('assets/js/plugins/apexcharts.min.js') }}"></script>
+    <script src="{{ asset('assets/js/pages/dashboard-default.js') }}"></script>
     <!-- [Page Specific JS] end -->
     <!-- Required Js -->
-    <script src="../assets/js/plugins/popper.min.js"></script>
-    <script src="../assets/js/plugins/simplebar.min.js"></script>
-    <script src="../assets/js/plugins/bootstrap.min.js"></script>
-    <script src="../assets/js/fonts/custom-font.js"></script>
-    <script src="../assets/js/pcoded.js"></script>
-    <script src="../assets/js/plugins/feather.min.js"></script>
+    <script src="{{ asset('assets/js/plugins/popper.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/simplebar.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/fonts/custom-font.js') }}"></script>
+    <script src="{{ asset('assets/js/pcoded.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
 
 
 

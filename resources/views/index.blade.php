@@ -1,5 +1,6 @@
 @extends('components.main')
-@section('content')
+@section('title','Home')
+@section('user-body')
 
     <!-- Hero Section Begin -->
     <section class="hero">
@@ -509,8 +510,260 @@
     <!-- Latest Blog Section End -->
 
     <!--recent product-->
-    <section>
-        
-    </section>
+</section>
+
+<!-- Recent Products Section -->
+<section class="recent-products py-5">
+    <div class="container">
+        <div class="section-title text-center mb-5">
+            <span>New Arrivals</span>
+            <h2>Recent Products</h2>
+        </div>
+
+        <div class="owl-carousel recent-products-carousel">
+            @foreach($recentProducts as $product)
+            <div class="product-item">
+                <div class="product-img">
+                    <img src="{{ asset($product->photo) }}" alt="{{ $product->name }}">
+                    <div class="product-overlay">
+                        <div class="product-actions">
+                            <a href="{{ route('product.details', $product->id) }}" class="action-btn">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <form action="{{ route('addToCart', $product->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="action-btn">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h5 class="product-title">
+                        <a href="{{ route('product.details', $product->id) }}">{{ $product->name }}</a>
+                    </h5>
+                    <div class="product-category">{{ $product->category->category }}</div>
+                    <div class="product-price">RS {{ number_format($product->price, 2) }}</div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        <div class="text-center mt-4">
+            <a href="{{ route('shop') }}" class="btn btn-primary btn-lg">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Recent Products Section Styles */
+    .recent-products {
+        background-color: #f8f9fa;
+    }
+
+    .section-title span {
+        color: #e53637;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .section-title h2 {
+        color: #111111;
+        font-weight: 700;
+        line-height: 46px;
+    }
+
+    .product-item {
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        margin: 15px;
+    }
+
+    .product-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-img {
+        position: relative;
+        overflow: hidden;
+        padding-top: 100%; /* 1:1 Aspect Ratio */
+    }
+
+    .product-img img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .product-item:hover .product-img img {
+        transform: scale(1.1);
+    }
+
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .product-item:hover .product-overlay {
+        opacity: 1;
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-btn {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #111;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .action-btn:hover {
+        background: #e53637;
+        color: #fff;
+    }
+
+    .product-info {
+        padding: 20px;
+    }
+
+    .product-title {
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .product-title a {
+        color: #111;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .product-title a:hover {
+        color: #e53637;
+    }
+
+    .product-category {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .product-price {
+        color: #e53637;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* Owl Carousel Custom Styles */
+    .owl-nav {
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        transform: translateY(-50%);
+        display: flex;
+        justify-content: space-between;
+        padding: 0 20px;
+    }
+
+    .owl-prev, .owl-next {
+        width: 40px;
+        height: 40px;
+        background: #fff !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .owl-prev:hover, .owl-next:hover {
+        background: #e53637 !important;
+        color: #fff !important;
+    }
+
+    .owl-dots {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .owl-dot {
+        width: 10px;
+        height: 10px;
+        background: #ddd !important;
+        border-radius: 50%;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+    }
+
+    .owl-dot.active {
+        background: #e53637 !important;
+        transform: scale(1.2);
+    }
+</style>
+
+<!-- Add this before closing body tag -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.recent-products-carousel').owlCarousel({
+            loop: true,
+            margin: 20,
+            nav: true,
+            dots: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            autoplayHoverPause: true,
+            navText: ['<i class="fas fa-chevron-left"></i>', '<i class="fas fa-chevron-right"></i>'],
+            responsive: {
+                0: {
+                    items: 1
+                },
+                576: {
+                    items: 2
+                },
+                992: {
+                    items: 3
+                },
+                1200: {
+                    items: 4
+                }
+            }
+        });
+    });
+</script>
     @endsection
    

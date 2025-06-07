@@ -43,7 +43,7 @@ class ProductController extends Controller
             'product_name' => 'required|string|max:255',
             'product_price' => 'required|numeric',
             'product_quantity' => 'required|integer',
-            'category' => 'required|exists:category,id',
+            'category' => 'required',
             'product_description' => 'nullable|string',
             'product_photo' => 'image|max:2048',
         ]);
@@ -60,7 +60,7 @@ class ProductController extends Controller
             'name' => $request->product_name,
             'price' => $request->product_price,
             'quantity' => $request->product_quantity,
-            'category' => $request->category,
+            'category_id' => $request->category,
             'description' => $request->product_description,
             'photo' => $photoName,
         ]);
@@ -72,12 +72,25 @@ class ProductController extends Controller
     /** 
      * Display the specified resource.
      */
+    // public function show(string $id)
+    // {
+    //     $product = Product::findOrFail($id);
+    //     return view('details', compact('product'));
+    // }
     public function show(string $id)
     {
-        $product = Product::findOrFail($id);
-        return view('details', compact('product'));
+        $product = Product::with('category')->findOrFail($id);
+        
+        // Get related products from the same category
+        $relatedProducts = Product::with('category')
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+        
+        return view('details', compact('product', 'relatedProducts'));
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -118,4 +131,10 @@ class ProductController extends Controller
 
         return redirect()->route('products.view')->with('success', 'Product deleted successfully!');
     }
+    
+public function home()
+{
+    $latestProducts = Product::latest()->take(10)->get();
+    return view('userhome', compact('latestProducts'));
+}
 }
